@@ -1,0 +1,78 @@
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'kotlin-android-extensions'
+}
+
+android {
+    compileSdkVersion App.compileSdk
+    buildToolsVersion App.buildToolVersion
+
+    defaultConfig {
+        minSdkVersion App.minSdk
+        targetSdkVersion App.targetSdk
+        versionCode App.versionCode
+        versionName App.versionName
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+        test.java.srcDirs += 'src/test/kotlin'
+    }
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
+def API_URL = System.getenv("BASE_URL") ?: BASE_URL
+
+android.buildTypes.each { type ->
+    type.buildConfigField "String", "BASE_URL", "\"$API_URL\""
+}
+
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation project(':domain')
+    implementation Libs.KOTLIN
+    implementation Libs.TIMBER
+    implementation Libs.GSON
+
+    implementation Libs.RX_ANDROID
+    implementation Libs.RX_ADAPTER
+    implementation Libs.RX_KOTLIN
+    implementation Libs.MOSHI
+    implementation Libs.MOSHI_ADAPTER
+
+    implementation Libs.RETROFIT
+    implementation Libs.RETROFIT_MOSHI_CONVERTER
+    implementation Libs.LOGGING_INTERCEPTOR
+    implementation Libs.OK_HTTP
+
+    implementation Libs.DAGGER_SUPPORT
+    implementation Libs.DAGGER_LIB
+    kapt Libs.DAGGER_COMPILER
+    kapt Libs.DAGGER_ANDROID
+
+    api Libs.ROOM_DB
+    api  Libs.ROOM_RXJAVA
+    kapt Libs.ROOM_COMPILER
+
+    testImplementation TestLibs.JUNIT
+    testImplementation TestLibs.MOCKITO
+    testImplementation TestLibs.MOCKITO_HARRMAN
+}
